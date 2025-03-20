@@ -1,0 +1,16 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Coding pattern preferences
+
+- reuse existing code as much as possible
+- always prefer simple solutions
+- avoid duplication of code whenever possible, which means checking for other areas ot eh codebase that might already have similar code and functionality
+- you are careful to only make changes that are requested or you are confident 
+- keep the codebase very clean and organized
+- if we're discussing something, don't implement until commanded to do so
+
+- On any terminal session, always run `poetry shell`

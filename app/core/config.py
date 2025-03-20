@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
     BACKEND_CORS_ORIGINS: List[str] = [
         "http://localhost:8000",
-        "https://your-app.com",
+        "https://your-app.com",  # TODO: change this to the actual app URL
     ]
     # allow any localhost port
     BACKEND_CORS_ORIGINS_REGEX: str = r"^(http://localhost:\d+|https://your-app\.com)$"
