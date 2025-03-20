@@ -6,7 +6,7 @@ import time
 
 import redis.asyncio as redis
 import uvicorn
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, status
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from fastapi_cache.decorator import cache
@@ -22,10 +22,33 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=settings.LOG_LEVEL.upper())
 
 
+class HealthResponse(BaseModel):
+    status: str
+    redis_status: str
+    version: str = "1.0.0"
+
+
 class UserResponse(BaseModel):
     user_id: str
     email: str
     name: str
+
+
+@app.get("/health", response_model=HealthResponse)
+async def health_check():
+    redis_url = f"redis://{settings.REDISUSER}:{settings.REDISPASSWORD}@{settings.REDISHOST}:{settings.REDISPORT}"
+    try:
+        red = redis.from_url(redis_url, encoding="utf-8", decode_responses=True)
+        await red.ping()
+        redis_status = "healthy"
+    except Exception as e:
+        logger.error(f"Redis health check failed: {str(e)}")
+        redis_status = "unhealthy"
+
+    return {
+        "status": "healthy",
+        "redis_status": redis_status,
+    }
 
 
 @app.get("/")
