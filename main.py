@@ -20,13 +20,6 @@ app.include_router(health.router)
 app.include_router(users.router)
 
 
-@app.get("/")
-def root():
-    # endpoints can be marked as `async def` if they do async work, otherwise use `def`
-    # which will make the request run on a thread "awaited"
-    return {"message": "Hello world. Welcome to FastAPI!"}
-
-
 @app.middleware("http")
 async def time_request(request, call_next):
     start_time = time.time()
