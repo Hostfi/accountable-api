@@ -1,6 +1,7 @@
 import logging
 import time
 
+from dotenv import load_dotenv
 import uvicorn
 from fastapi import Depends, FastAPI
 from fastapi_limiter.depends import RateLimiter
@@ -36,6 +37,7 @@ async def startup():
 
 
 def dev():
+    load_dotenv(".env.local", override=True)
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
 
 

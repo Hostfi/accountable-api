@@ -4,7 +4,7 @@ from typing import List, Union
 from dotenv import load_dotenv
 from pydantic import BaseSettings, validator
 
-load_dotenv(override=True)
+load_dotenv()
 
 
 class Settings(BaseSettings):

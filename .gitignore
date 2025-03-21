@@ -160,3 +160,6 @@ cython_debug/
 
 # Local Redis dump file
 dump.rdb
+
+# Local environment variables
+.env.*
