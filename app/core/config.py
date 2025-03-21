@@ -1,9 +1,10 @@
+import os
 from typing import List, Union
 
 from dotenv import load_dotenv
 from pydantic import BaseSettings, validator
 
-load_dotenv()
+load_dotenv(override=True)
 
 
 class Settings(BaseSettings):
@@ -23,11 +24,11 @@ class Settings(BaseSettings):
             return v
         raise ValueError(v)
 
-    # redis credentials
-    REDISUSER: str = ""
-    REDISPASSWORD: str = ""
+    # Redis settings
     REDISHOST: str = "localhost"
     REDISPORT: str = "6379"
+    REDISUSER: str = ""
+    REDISPASSWORD: str = ""
 
     @validator("REDISHOST", "REDISPORT")
     def check_redis(cls, v, field):
@@ -37,6 +38,11 @@ class Settings(BaseSettings):
             )
         return v
 
+    # Supabase settings
+    SUPABASE_URL: str
+    SUPABASE_KEY: str
+
+    # Logging
     LOG_LEVEL: str = "info"
 
     @validator("LOG_LEVEL")
