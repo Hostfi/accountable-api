@@ -6,7 +6,7 @@ import uvicorn
 from fastapi import Depends, FastAPI
 from fastapi_limiter.depends import RateLimiter
 
-from app.api.endpoints import health, users
+from app.api.endpoints import health, organizations, users
 from app.core.config import settings
 from app.utils.redis import init_redis
 
@@ -19,6 +19,7 @@ logging.basicConfig(level=settings.LOG_LEVEL.upper())
 # Register routers
 app.include_router(health.router)
 app.include_router(users.router)
+app.include_router(organizations.router)
 
 
 @app.middleware("http")
