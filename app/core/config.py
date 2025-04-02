@@ -2,7 +2,8 @@ import os
 from typing import List, Union
 
 from dotenv import load_dotenv
-from pydantic import BaseSettings, validator
+from pydantic import field_validator
+from pydantic_settings import BaseSettings
 
 load_dotenv()
 
@@ -16,7 +17,8 @@ class Settings(BaseSettings):
     # allow any localhost port
     BACKEND_CORS_ORIGINS_REGEX: str = r"^(http://localhost:\d+|https://your-app\.com)$"
 
-    @validator("BACKEND_CORS_ORIGINS", pre=True)
+    @field_validator("BACKEND_CORS_ORIGINS", mode="before")
+    @classmethod
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
         if isinstance(v, str) and not v.startswith("["):
             return [i.strip() for i in v.split(",")]
@@ -30,7 +32,8 @@ class Settings(BaseSettings):
     REDISUSER: str = ""
     REDISPASSWORD: str = ""
 
-    @validator("REDISHOST", "REDISPORT")
+    @field_validator("REDISHOST", "REDISPORT")
+    @classmethod
     def check_redis(cls, v, field):
         if not v:
             raise ValueError(
@@ -42,10 +45,18 @@ class Settings(BaseSettings):
     SUPABASE_URL: str
     SUPABASE_KEY: str
 
+    # Clerk settings
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: str
+    CLERK_SECRET_KEY: str
+
+    # OpenAI settings
+    OPENAI_API_KEY: str
+
     # Logging
     LOG_LEVEL: str = "info"
 
-    @validator("LOG_LEVEL")
+    @field_validator("LOG_LEVEL")
+    @classmethod
     def check_log_level(cls, v, field):
         if v not in ["debug", "info", "warning", "error", "critical"]:
             raise ValueError(
