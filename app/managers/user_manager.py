@@ -5,21 +5,15 @@ from uuid import UUID
 import httpx
 
 from app.managers.base_manager import BaseManager
+from app.managers.clerk_manager import ClerkManager
 from app.schemas.user import UserCreate, UserInDB, UserUpdate
-
-CLERK_API_KEY = os.getenv("CLERK_API_KEY", "")
-CLERK_API_BASE = "https://api.clerk.dev/v1"
 
 
 class UserManager(BaseManager[UserInDB]):
-    """Manager for user operations with Clerk integration."""
+    """Manager for user operations."""
 
     def __init__(self):
         super().__init__("users")
-        self.clerk_headers = {
-            "Authorization": f"Bearer {CLERK_API_KEY}",
-            "Content-Type": "application/json",
-        }
 
     async def get_user_by_clerk_id(self, clerk_id: str) -> Optional[Dict[str, Any]]:
         """Get a user by their Clerk ID."""
@@ -45,24 +39,11 @@ class UserManager(BaseManager[UserInDB]):
     async def sync_user_from_clerk(self, clerk_id: str) -> Optional[Dict[str, Any]]:
         """Sync user data from Clerk to Supabase."""
         try:
-            # Get user data from Clerk
-            async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    f"{CLERK_API_BASE}/users/{clerk_id}",
-                    headers=self.clerk_headers,
-                )
-                if response.status_code != 200:
+            # Get user data from Clerk using ClerkManager
+            with ClerkManager() as clerk:
+                clerk_user = await clerk.get_user(clerk_id)
+                if not clerk_user:
                     return None
-
-                clerk_user = response.json()
-
-                # Extract necessary user data
-                email = clerk_user.get("email_addresses", [{}])[0].get(
-                    "email_address", ""
-                )
-                first_name = clerk_user.get("first_name", "")
-                last_name = clerk_user.get("last_name", "")
-                profile_image_url = clerk_user.get("profile_image_url", "")
 
                 # Check if user already exists in Supabase
                 existing_user = await self.get_user_by_clerk_id(clerk_id)
@@ -70,20 +51,15 @@ class UserManager(BaseManager[UserInDB]):
                 if existing_user:
                     # Update user if exists
                     user_data = {
-                        "email": email,
-                        "full_name": f"{first_name} {last_name}".strip(),
-                        "avatar_url": profile_image_url,
+                        "email": clerk_user["email"],
+                        "first_name": clerk_user["first_name"],
+                        "last_name": clerk_user["last_name"],
+                        "avatar_url": clerk_user["avatar_url"],
                     }
                     return await self.update(UUID(existing_user["id"]), user_data)
                 else:
                     # Create new user
-                    user_data = {
-                        "clerk_id": clerk_id,
-                        "email": email,
-                        "full_name": f"{first_name} {last_name}".strip(),
-                        "avatar_url": profile_image_url,
-                    }
-                    return await self.create(user_data)
+                    return await self.create(clerk_user)
 
         except Exception as e:
             print(f"Error syncing user from Clerk: {str(e)}")

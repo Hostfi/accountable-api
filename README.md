@@ -2,6 +2,31 @@
 
 A FastAPI backend for the Accountable application, using Supabase for data storage and Clerk for authentication.
 
+## Architecture
+
+The application follows a layered architecture pattern:
+
+### API Layers
+
+1. **Endpoints** (`app/api/endpoints/`)
+   - HTTP/REST interface layer
+   - Handles request/response formatting
+   - Input validation and error responses
+   - Routes requests to appropriate managers/services
+   - Example: `users.py` defines REST endpoints for user operations
+
+2. **Managers** (`app/managers/`)
+   - Business logic and database operations
+   - Direct interaction with Supabase
+   - CRUD operations and data transformations
+   - Example: `user_manager.py` handles user data persistence
+
+3. **Services** (`app/services/`)
+   - Complex business operations
+   - Orchestrates multiple managers
+   - Handles caching and cross-cutting concerns
+   - Example: `user_service.py` manages cached user operations
+
 ## Prerequisites
 
 - Python 3.11+

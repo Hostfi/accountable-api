@@ -7,7 +7,8 @@ from pydantic import BaseModel, EmailStr
 
 class UserBase(BaseModel):
     email: EmailStr
-    full_name: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     avatar_url: Optional[str] = None
 
 
@@ -30,4 +31,7 @@ class UserInDB(UserBase):
 
 
 class UserResponse(UserInDB):
-    pass
+    @property
+    def full_name(self) -> str:
+        """Get the user's full name."""
+        return f"{self.first_name or ''} {self.last_name or ''}".strip() or None

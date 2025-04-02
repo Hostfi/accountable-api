@@ -15,7 +15,8 @@ create table users (
     id uuid primary key default uuid_generate_v4(),
     clerk_id text not null unique,
     email text not null unique,
-    full_name text,
+    first_name text,
+    last_name text,
     avatar_url text,
     created_at timestamptz default now(),
     updated_at timestamptz default now()
