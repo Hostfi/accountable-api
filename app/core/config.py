@@ -44,6 +44,8 @@ class Settings(BaseSettings):
     # Supabase settings
     SUPABASE_URL: str
     SUPABASE_KEY: str
+    SUPABASE_DB_PASSWORD: str
+    SUPABASE_PROJECT_REF: str
 
     # Clerk settings
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: str
