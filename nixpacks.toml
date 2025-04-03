@@ -1,0 +1,5 @@
+[phases.setup]
+nixPkgs = ['supabase-cli']
+
+[phases.install]
+cmds = ['poetry install'] 
