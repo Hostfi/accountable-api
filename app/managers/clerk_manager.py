@@ -1,5 +1,6 @@
 from typing import Any, Dict, Optional
-from clerk_backend_api import Clerk
+from clerk_backend_api import AuthenticateRequestOptions, Clerk, RequestState
+from fastapi import Request
 
 from app.core.config import settings
 
@@ -39,3 +40,11 @@ class ClerkManager:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.client.__exit__(exc_type, exc_val, exc_tb)
+
+    def authenticate_request(self, request: Request) -> RequestState:
+        return self.client.authenticate_request(
+            request,
+            AuthenticateRequestOptions(
+                jwt_key=settings.CLERK_JWKS_KEY,
+            ),
+        )

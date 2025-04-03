@@ -48,6 +48,7 @@ class Settings(BaseSettings):
     # Clerk settings
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: str
     CLERK_SECRET_KEY: str
+    CLERK_JWKS_KEY: str
 
     # OpenAI settings
     OPENAI_API_KEY: str

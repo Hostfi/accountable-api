@@ -10,7 +10,7 @@ from app.api.endpoints import health, organizations, users
 from app.core.config import settings
 from app.utils.redis import init_redis
 
-app = FastAPI(dependencies=[Depends(RateLimiter(times=1, seconds=5))])
+app = FastAPI(dependencies=[Depends(RateLimiter(times=20, seconds=10))])
 logger = logging.getLogger(__name__)
 # .env variables can be validated and accessed from the config, here to set a log level
 logging.basicConfig(level=settings.LOG_LEVEL.upper())
