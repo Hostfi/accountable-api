@@ -110,8 +110,10 @@ To apply migrations locally:
 accountable-api/
 ├── app/
 │   ├── api/            # API routes and dependencies
-│   ├── managers/       # Business logic and database operations
+│   ├── core/           # Core app logic
+│   ├── managers/       # Integration logic and database operations
 │   ├── schemas/        # Pydantic models
+│   ├── services/       # Business logic
 │   └── utils/          # Utility functions
 ├── tests/             # Test files
 ├── poetry.lock        # Lock file for dependencies
