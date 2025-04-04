@@ -1,86 +1,141 @@
 # Accountable API
 
-A robust HTTP REST API built with [FastAPI](https://fastapi.tiangolo.com/) for the Accountable platform.
+A FastAPI backend for the Accountable application, using Supabase for data storage and Clerk for authentication.
 
-This API includes the following features:
+## Architecture
 
-- **REST API endpoints** - a set of REST API endpoints using standard, spec-compliant methods like `GET` & `POST`
-- **Rate Limiting** - automatic prevention of abuse of your API, at configurable rates based on customizable identifiers
-- **Caching** - persistence of API responses to reduce load and improve performance
-- **Dependency Injection** - invert control and share common functionality across the API
-- **OpenAPI Documentation** - automatically generated OpenAPI documentation
-- **Type Hints** - well-defined requests and responses with Pydantic models and type hints
-- **Environment Variables** - configuration using environment variables that can be set in a `.env` file
+The application follows a layered architecture pattern:
 
-### 🛠️ Setup & Installation
+### API Layers
 
-Prerequisites:
+1. **Endpoints** (`app/api/endpoints/`)
+   - HTTP/REST interface layer
+   - Handles request/response formatting
+   - Input validation and error responses
+   - Routes requests to appropriate managers/services
+   - Example: `users.py` defines REST endpoints for user operations
 
-- [Python 3.10](https://www.python.org/downloads/)
-- [Poetry](https://python-poetry.org/docs/#installation)
-- [Redis](https://redis.io/download)
+2. **Managers** (`app/managers/`)
+   - Business logic and database operations
+   - Direct interaction with Supabase
+   - CRUD operations and data transformations
+   - Example: `user_manager.py` handles user data persistence
 
-1. Clone the repository
+3. **Services** (`app/services/`)
+   - Complex business operations
+   - Orchestrates multiple managers
+   - Handles caching and cross-cutting concerns
+   - Example: `user_service.py` manages cached user operations
 
-```bash
-git clone https://github.com/hostfi/accountable-api.git
-cd accountable-api
+## Prerequisites
+
+- Python 3.11+
+- [Poetry](https://python-poetry.org/) for dependency management
+- [Railway CLI](https://docs.railway.app/develop/cli) for local development
+- A Supabase project
+- A Clerk account
+
+## Setup
+
+1. **Install Poetry**
+   ```bash
+   curl -sSL https://install.python-poetry.org | python3 -
+   ```
+
+2. **Install Railway CLI**
+   ```bash
+   # macOS
+   brew install railway
+
+   # Other platforms
+   npm i -g @railway/cli
+   ```
+
+3. **Clone and Install Dependencies**
+   ```bash
+   git clone <repository-url>
+   cd accountable-api
+   poetry install
+   ```
+
+4. **Environment Setup**
+   ```bash
+   # Login to Railway
+   railway login
+
+   # Link to your Railway project
+   railway link
+
+   # Start a shell with the environment variables
+   railway run poetry shell
+   ```
+
+## Development
+
+1. **Activate Poetry Shell with Railway Environment**
+   ```bash
+   railway run poetry shell
+   ```
+
+2. **Run Development Server**
+   ```bash
+   # Inside the Poetry shell with Railway environment
+   poetry run dev
+   ```
+
+   This will start the FastAPI server with hot reload enabled.
+
+3. **Run Tests**
+   ```bash
+   poetry run test
+   ```
+
+## API Documentation
+
+Once the server is running, you can access:
+- Interactive API docs (Swagger UI): http://localhost:8000/docs
+- Alternative API docs (ReDoc): http://localhost:8000/redoc
+
+## Database Migrations
+
+Migrations are managed through Supabase and stored in the `supabase/migrations` directory.
+
+To apply migrations locally:
+1. Ensure you're in the Poetry shell with Railway environment
+2. Run the migrations through the Supabase dashboard or CLI
+
+## Project Structure
+
+```
+accountable-api/
+├── app/
+│   ├── api/            # API routes and dependencies
+│   ├── core/           # Core app logic
+│   ├── managers/       # Integration logic and database operations
+│   ├── schemas/        # Pydantic models
+│   ├── services/       # Business logic
+│   └── utils/          # Utility functions
+├── tests/             # Test files
+├── poetry.lock        # Lock file for dependencies
+└── pyproject.toml     # Project configuration and dependencies
 ```
 
-2. Create a Poetry virtual environment
+## Environment Variables
 
-```bash
-poetry env use 3.10
-```
+The following environment variables are required and managed through Railway:
 
-Start a shell within the virtual environment
+- `SUPABASE_URL`: Your Supabase project URL
+- `SUPABASE_KEY`: Your Supabase service role key
+- `CLERK_API_KEY`: Your Clerk API key
+- `DATABASE_URL`: PostgreSQL connection string
 
-```bash
-poetry shell
-```
+## Contributing
 
-3. Install dependencies
+1. Create a feature branch
+2. Make your changes
+3. Run tests
+4. Submit a pull request
 
-```bash
-poetry install
-```
+## License
 
-4. Run the application
-
-First make sure to start a redis server with
-
-```bash
-redis-server
-```
-
-Then run the application with:
-
-```bash
-poetry run dev
-```
-
-You should now be able to access the API at http://localhost:8000 on your machine.
-
-## 📃 API Documentation
-
-FastAPI automatically generates OpenAPI documentation for the API. You can access the interactive documentation at:
-
-- Swagger UI: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
-
-## 🔑 Environment Variables
-
-Environment variables are managed through a `.env` file. See the example `.env` file in the repository for the required configurations.
-
-## 💿 Technology Stack
-
-Built with modern technologies:
-
-- **FastAPI** - High-performance web framework for building APIs with Python
-- **Python 3.10** - Modern Python version with latest features
-- **Poetry** - Dependency management and packaging
-- **Redis** - In-memory data store for caching and rate limiting
-
-## 📝 Additional Resources
-
-- [FastAPI Documentation](https://fastapi.tiangolo.com/tutorial/) - Comprehensive guide for building and structuring FastAPI applications
+[License Type] - See LICENSE file for details
