@@ -5,7 +5,7 @@
     "nixpacksConfigPath": "nixpacks.toml"
   },
   "deploy": {
-    "preDeployCommand": "supabase link --project-ref $SUPABASE_PROJECT_REF && supabase db push",
+    "preDeployCommand": "supabase login --token $SUPABASE_ACCESS_TOKEN && supabase link --project-ref $SUPABASE_PROJECT_ID -p $SUPABASE_DB_PASSWORD && supabase db push",
     "startCommand": "uvicorn main:app --host 0.0.0.0 --port $PORT",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10,

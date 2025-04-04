@@ -106,44 +106,7 @@ $$ language plpgsql security definer;
 
 comment on function get_user_organizations is 'Get all organizations a user administers';
 
--- Enable Row Level Security
-alter table users enable row level security;
-alter table organizations enable row level security;
-alter table organization_members enable row level security;
-
--- RLS Policies for users table
-create policy "Users can read their own profile"
-    on users for select
-    using (clerk_id = auth.uid());
-
-create policy "Users can update their own profile"
-    on users for update
-    using (clerk_id = auth.uid());
-
--- RLS Policies for organizations table
-create policy "Users can view organizations they administer"
-    on organizations for select
-    using (
-        id in (
-            select organization_id 
-            from organization_members 
-            where user_id in (select id from users where clerk_id = auth.uid())
-        )
-    );
-
-create policy "Users can update organizations they administer"
-    on organizations for update
-    using (
-        id in (
-            select organization_id 
-            from organization_members 
-            where user_id in (select id from users where clerk_id = auth.uid())
-        )
-    );
-
--- RLS Policies for organization_members table
-create policy "Users can view their organization memberships"
-    on organization_members for select
-    using (
-        user_id in (select id from users where clerk_id = auth.uid())
-    ); 
+-- Note: We're using Clerk for authentication instead of Supabase Auth
+-- Access control will be handled in the application layer, not through RLS
+-- This is because auth.uid() and other auth functions from Supabase Auth
+-- are not available when using Clerk as the authentication provider 

@@ -42,10 +42,10 @@ class Settings(BaseSettings):
         return v
 
     # Supabase settings
-    SUPABASE_URL: str
     SUPABASE_KEY: str
     SUPABASE_DB_PASSWORD: str
-    SUPABASE_PROJECT_REF: str
+    SUPABASE_PROJECT_ID: str
+    SUPABASE_ACCESS_TOKEN: str
 
     # Clerk settings
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: str
