@@ -1,0 +1,39 @@
+name: Accountable API CI # Renamed for clarity
+
+on: [push]
+
+jobs:
+    lint:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                  # Use a version compatible with pyproject.toml (>=3.10)
+                  python-version: "3.11"
+
+            - name: Install Poetry
+              run: pip install poetry
+
+            - name: Configure Poetry Cache # Add caching for speed
+              uses: actions/cache@v4
+              with:
+                  path: ~/.cache/pypoetry # Default Poetry cache directory
+                  # Use lock file hash as cache key
+                  key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-poetry-
+
+            - name: Install dependencies
+              run: poetry install --with dev --no-interaction --no-ansi # Install main + dev dependencies
+
+            - name: Lint with flake8
+              # Run via poetry run and target the 'app' directory
+              run: poetry run flake8 app/ --count --statistics
+
+            - name: Typecheck with MyPy
+              # Run via poetry run and target the 'app' directory
+              run: poetry run mypy app/
