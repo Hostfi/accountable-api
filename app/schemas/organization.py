@@ -7,9 +7,10 @@ from pydantic import BaseModel, EmailStr
 
 class OrganizationBase(BaseModel):
     name: str
-    slug: str
     logo_url: Optional[str] = None
+    website_url: Optional[str] = None
     billing_email: Optional[EmailStr] = None
+    ein: Optional[str] = None
 
 
 class OrganizationCreate(OrganizationBase):
