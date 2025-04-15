@@ -1,15 +1,14 @@
-import os
 from typing import Any, Dict, List, Optional
 from uuid import UUID
 
-import httpx
 
 from app.managers.base_manager import BaseManager
 from app.managers.clerk_manager import ClerkManager
-from app.schemas.user import UserCreate, UserInDB, UserUpdate
+from app.models.user import User
+from app.schemas.user import UserCreate, UserUpdate
 
 
-class UserManager(BaseManager[UserInDB]):
+class UserManager(BaseManager[User]):
     """Manager for user operations."""
 
     def __init__(self):
