@@ -15,7 +15,7 @@ convention = {
     "pk": "pk_%(table_name)s",
 }
 
-metadata_obj = MetaData(naming_convention=convention)
+metadata_obj = MetaData(schema="public", naming_convention=convention)
 
 
 class Base(DeclarativeBase):

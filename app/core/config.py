@@ -45,6 +45,7 @@ class Settings(BaseSettings):
     SUPABASE_DB_PASSWORD: str
     SUPABASE_PROJECT_ID: str
     SUPABASE_ACCESS_TOKEN: str
+    DATABASE_URL: str
 
     # Clerk settings
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: str
