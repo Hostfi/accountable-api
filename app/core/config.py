@@ -11,11 +11,10 @@ load_dotenv()
 class Settings(BaseSettings):
     # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
     BACKEND_CORS_ORIGINS: List[str] = [
-        "http://localhost:8000",
-        "https://your-app.com",  # TODO: change this to the actual app URL
+        "http://localhost:3000",
+        "http://local.tryaccountable.ai:3000",
+        "*.tryaccountable.ai",
     ]
-    # allow any localhost port
-    BACKEND_CORS_ORIGINS_REGEX: str = r"^(http://localhost:\d+|https://your-app\.com)$"
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod

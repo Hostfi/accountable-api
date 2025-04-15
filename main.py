@@ -4,6 +4,7 @@ import time
 from dotenv import load_dotenv
 import uvicorn
 from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi_limiter.depends import RateLimiter
 
 from app.api.endpoints import health, organizations, users
@@ -11,6 +12,16 @@ from app.core.config import settings
 from app.utils.redis import init_redis
 
 app = FastAPI(dependencies=[Depends(RateLimiter(times=20, seconds=10))])
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.BACKEND_CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 logger = logging.getLogger(__name__)
 # .env variables can be validated and accessed from the config, here to set a log level
 logging.basicConfig(level=settings.LOG_LEVEL.upper())
