@@ -2,18 +2,20 @@ from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 
 
 class OrganizationBase(BaseModel):
-    name: str
+    name: str | None = None
     logo_url: Optional[str] = None
     website_url: Optional[str] = None
     billing_email: Optional[EmailStr] = None
     ein: Optional[str] = None
+    plan: Optional[str] = None
 
 
 class OrganizationCreate(OrganizationBase):
+    name: str
     plan: Optional[str] = "free"
 
 
@@ -21,23 +23,18 @@ class OrganizationUpdate(OrganizationBase):
     pass
 
 
-class OrganizationInDB(OrganizationBase):
+class OrganizationResponse(OrganizationBase):
     id: UUID
-    plan: str = "free"
+    plan: str
     created_at: datetime
     updated_at: datetime
+    name: str
 
-    class Config:
-        orm_mode = True
-
-
-class OrganizationResponse(OrganizationInDB):
-    pass
+    model_config = ConfigDict(from_attributes=True)
 
 
 class OrganizationAdmin(BaseModel):
     organization_id: UUID
     user_id: UUID
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
