@@ -16,5 +16,5 @@ async def check_supabase_health() -> str:
     try:
         get_supabase_client()
         return "healthy"
-    except Exception as e:
+    except Exception:
         return "unhealthy"

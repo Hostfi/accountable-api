@@ -1,9 +1,7 @@
-from typing import Optional, Tuple, AsyncIterator, Annotated
-from uuid import UUID
+from typing import Annotated
 
 from fastapi import Depends, Request, HTTPException, status
 from clerk_backend_api import RequestState
-from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db_session

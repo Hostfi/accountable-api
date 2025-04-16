@@ -1,5 +1,5 @@
 from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped, mapped_column
-from sqlalchemy import MetaData, Column, DateTime, UUID as SQLAlchemyUUID
+from sqlalchemy import MetaData, DateTime, UUID as SQLAlchemyUUID
 from sqlalchemy.sql import func
 import uuid as uuid_pkg  # Use alias to avoid conflict with column name
 from datetime import datetime

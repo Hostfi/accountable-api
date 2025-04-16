@@ -1,4 +1,3 @@
-import os
 from typing import List, Union
 
 from dotenv import load_dotenv
@@ -63,7 +62,8 @@ class Settings(BaseSettings):
     def check_log_level(cls, v, field):
         if v not in ["debug", "info", "warning", "error", "critical"]:
             raise ValueError(
-                f"{field.name} must be a standard log level. For local development, you can use the default value in your .env '{field.name}={field.default}'"
+                f"{field.name} must be a standard log level. "
+                "For local development, you can use the default value in your .env '{field.name}={field.default}'"
             )
         return v
 

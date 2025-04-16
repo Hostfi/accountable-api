@@ -22,13 +22,14 @@ async def create_organization(
     current_user: UserResponse = Depends(get_current_user),
 ):
     """Create a new organization."""
-    organization_manager = OrganizationManager()
-    organization, error = await organization_manager.create_organization(
-        organization_create, current_user.id
-    )
+    print(organization_create)
+    # organization_manager = OrganizationManager()
+    # organization, error = await organization_manager.create_organization(
+    #     organization_create, current_user.id
+    # )
 
-    if error:
-        raise HTTPException(status_code=400, detail=error.get("error"))
+    # if error:
+    #     raise HTTPException(status_code=400, detail=error.get("error"))
 
     return organization
 
