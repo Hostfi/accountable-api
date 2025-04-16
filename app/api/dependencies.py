@@ -1,14 +1,18 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, AsyncIterator, Annotated
 from uuid import UUID
 
 from fastapi import Depends, Request, HTTPException, status
 from clerk_backend_api import RequestState
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config import settings
+from app.db.session import get_db_session
 from app.managers.clerk_manager import ClerkManager
-from app.managers.user_manager import UserManager
 from app.schemas.user import UserResponse
 from app.services.user import UserService
+
+
+DBSessionDep = Annotated[AsyncSession, Depends(get_db_session)]
 
 
 async def verify_auth_request(
