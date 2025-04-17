@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Any
 
 from dotenv import load_dotenv
 from pydantic import field_validator
@@ -32,7 +32,7 @@ class Settings(BaseSettings):
 
     @field_validator("REDISHOST", "REDISPORT")
     @classmethod
-    def check_redis(cls, v, field):
+    def check_redis(cls, v: Any, field: Any) -> Any:
         if not v:
             raise ValueError(
                 f"{field.name} must be defined. For local development, you can use the default value in your .env '{field.name}={field.default}'"
@@ -59,11 +59,10 @@ class Settings(BaseSettings):
 
     @field_validator("LOG_LEVEL")
     @classmethod
-    def check_log_level(cls, v, field):
+    def check_log_level(cls, v: str, field: Any) -> str:
         if v not in ["debug", "info", "warning", "error", "critical"]:
             raise ValueError(
-                f"{field.name} must be a standard log level. "
-                "For local development, you can use the default value in your .env '{field.name}={field.default}'"
+                f"{field.name} must be a standard log level. For local development, you can use the default value in your .env '{field.name}={field.default}'"
             )
         return v
 
@@ -72,4 +71,4 @@ class Settings(BaseSettings):
         env_file = ".env"
 
 
-settings = Settings()
+settings = Settings()  # type: ignore[call-arg] # Ignore MyPy error for missing env vars

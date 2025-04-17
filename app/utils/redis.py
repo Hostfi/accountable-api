@@ -6,8 +6,14 @@ from fastapi_limiter import FastAPILimiter
 from app.core.config import settings
 
 
-async def init_redis():
-    """Initialize Redis connections for rate limiting and caching."""
+async def init_redis() -> redis.Redis:
+    """Initialize Redis connections for rate limiting and caching.
+
+    Returns:
+        The initialized redis connection object.
+    Raises:
+        Exception: If the connection fails.
+    """
     redis_url = f"redis://{settings.REDISUSER}:{settings.REDISPASSWORD}@{settings.REDISHOST}:{settings.REDISPORT}"
     try:
         red = redis.from_url(redis_url, encoding="utf-8", decode_responses=True)

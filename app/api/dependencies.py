@@ -1,13 +1,17 @@
-from typing import Annotated
+from __future__ import annotations
+
+from typing import AsyncIterator, Annotated, Any
 
 from fastapi import Depends, Request, HTTPException, status
-from clerk_backend_api import RequestState
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
+from clerk_backend_api import RequestState
 
-from app.db.session import get_db_session
+from app.core.config import settings
 from app.managers.clerk_manager import ClerkManager
 from app.schemas.user import UserResponse
 from app.services.user import UserService
+from app.db.session import get_db_session, sessionmanager
 
 
 DBSessionDep = Annotated[AsyncSession, Depends(get_db_session)]
@@ -16,34 +20,39 @@ DBSessionDep = Annotated[AsyncSession, Depends(get_db_session)]
 async def verify_auth_request(
     request: Request,
 ) -> str:
-    """Verify the request authentication using Clerk."""
+    """Verify the request authentication using Clerk. Returns Clerk User ID."""
     try:
-        # Initialize Clerk manager
         clerk_manager = ClerkManager()
-
-        # Authenticate the request
         auth: RequestState = clerk_manager.authenticate_request(request)
-        if not auth.is_signed_in:
+        if not auth.is_signed_in or not auth.payload:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="User not signed in",
+                detail="User not signed in or payload missing",
             )
 
-        return auth.payload["sub"]
+        clerk_id: str | None = auth.payload.get("sub")
+        if not clerk_id:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Clerk User ID (sub) missing from token payload",
+            )
+        return clerk_id
 
     except Exception as e:
+        print(f"Authentication failed: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"Authentication failed: {str(e)}",
+            detail=f"Authentication failed",
         )
 
 
 async def get_current_user(
+    db: DBSessionDep,
     clerk_id: str = Depends(verify_auth_request),
 ) -> UserResponse:
-    """Get the current authenticated user."""
+    """Get the current authenticated user from DB using Clerk ID."""
     user_service = UserService()
-    user = await user_service.get_user(clerk_id)
+    user = await user_service.get_user(clerk_id=clerk_id)
 
     if not user:
         raise HTTPException(

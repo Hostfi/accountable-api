@@ -28,5 +28,5 @@ class OrganizationMember(BaseModel):
         ),  # Assuming you want to keep this unique constraint
     )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<OrganizationMember(org_id={self.organization_id}, user_id={self.user_id})>"

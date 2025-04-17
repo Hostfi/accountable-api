@@ -24,5 +24,5 @@ class Organization(BaseModel):
         back_populates="organization", cascade="all, delete-orphan"
     )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Organization(id={self.id}, name='{self.name}')>"

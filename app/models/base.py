@@ -3,6 +3,7 @@ from sqlalchemy import MetaData, DateTime, UUID as SQLAlchemyUUID
 from sqlalchemy.sql import func
 import uuid as uuid_pkg  # Use alias to avoid conflict with column name
 from datetime import datetime
+from typing import Type
 
 # Optional: Define naming conventions for constraints
 # Helps keep index/constraint names consistent and avoids
@@ -25,7 +26,7 @@ class Base(DeclarativeBase):
 
 
 @declared_attr
-def id(cls) -> Mapped[uuid_pkg.UUID]:
+def id(cls: Type) -> Mapped[uuid_pkg.UUID]:
     return mapped_column(
         SQLAlchemyUUID(as_uuid=True), primary_key=True, default=uuid_pkg.uuid4
     )
@@ -37,13 +38,13 @@ class TimestampMixin:
     # Use declared_attr for columns that might need table-specific context
     # although not strictly necessary for these simple defaults.
     @declared_attr
-    def created_at(cls) -> Mapped[datetime]:
+    def created_at(cls) -> Mapped[datetime]:  # type: ignore[misc]
         return mapped_column(
             DateTime(timezone=True), server_default=func.now(), nullable=False
         )
 
     @declared_attr
-    def updated_at(cls) -> Mapped[datetime]:
+    def updated_at(cls: Type) -> Mapped[datetime]:  # type: ignore[misc]
         return mapped_column(
             DateTime(timezone=True),
             server_default=func.now(),
@@ -56,7 +57,7 @@ class SoftDeleteMixin:
     """Mixin for a nullable deleted_at timestamp for soft deletes."""
 
     @declared_attr
-    def deleted_at(cls) -> Mapped[datetime | None]:
+    def deleted_at(cls: Type) -> Mapped[datetime | None]:  # type: ignore[misc]
         return mapped_column(DateTime(timezone=True), nullable=True, index=True)
 
 

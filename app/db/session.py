@@ -4,6 +4,7 @@ from typing import Any, AsyncIterator
 from sqlalchemy.ext.asyncio import (
     AsyncConnection,
     AsyncSession,
+    AsyncEngine,
     async_sessionmaker,
     create_async_engine,
 )
@@ -20,17 +21,19 @@ if not settings.DATABASE_URL or not settings.DATABASE_URL.startswith(
 
 
 class DatabaseSessionManager:
-    def __init__(self, host: str, engine_kwargs: dict[str, Any] = {}):
+    def __init__(self, host: str, engine_kwargs: dict[str, Any] = {}) -> None:
         # Initialize the async engine with provided host and kwargs
-        self._engine = create_async_engine(host, **engine_kwargs)
+        self._engine: AsyncEngine | None = create_async_engine(host, **engine_kwargs)
         # Initialize the session maker bound to the engine
-        self._sessionmaker = async_sessionmaker(
-            autocommit=False,
-            bind=self._engine,
-            expire_on_commit=False,  # Recommended for FastAPI
+        self._sessionmaker: async_sessionmaker[AsyncSession] | None = (
+            async_sessionmaker(
+                autocommit=False,
+                bind=self._engine,
+                expire_on_commit=False,  # Recommended for FastAPI
+            )
         )
 
-    async def close(self):
+    async def close(self) -> None:
         """Close the database engine."""
         if self._engine is None:
             # Should not happen if initialized correctly
