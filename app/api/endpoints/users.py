@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.dependencies import get_current_user, verify_auth_request
 from app.managers.user_manager import UserManager
-from app.schemas.user import UserCreate, UserResponse
+from app.schemas.user import UserResponse
 
 router = APIRouter(prefix="/users", tags=["users"])
 

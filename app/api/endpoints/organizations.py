@@ -3,11 +3,8 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.future import select
-from sqlalchemy import update
 
 from app.api.dependencies import get_current_user, DBSessionDep
-from app.managers.organization_manager import OrganizationManager
-from app.managers.user_manager import UserManager
 from app.schemas.organization import (
     OrganizationCreate,
     OrganizationResponse,

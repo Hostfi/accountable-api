@@ -2,12 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional
 from types import TracebackType
-from clerk_backend_api import (
-    AuthenticateRequestOptions,
-    Clerk,
-    RequestState,
-    Requestish,
-)
+from clerk_backend_api import AuthenticateRequestOptions, Clerk, RequestState
 from fastapi import Request
 
 from app.core.config import settings

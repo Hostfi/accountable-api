@@ -1,17 +1,15 @@
 from __future__ import annotations
 
-from typing import AsyncIterator, Annotated, Any
+from typing import Annotated
 
 from fastapi import Depends, Request, HTTPException, status
-from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from clerk_backend_api import RequestState
 
-from app.core.config import settings
 from app.managers.clerk_manager import ClerkManager
 from app.schemas.user import UserResponse
 from app.services.user import UserService
-from app.db.session import get_db_session, sessionmanager
+from app.db.session import get_db_session
 
 
 DBSessionDep = Annotated[AsyncSession, Depends(get_db_session)]
@@ -42,7 +40,7 @@ async def verify_auth_request(
         print(f"Authentication failed: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"Authentication failed",
+            detail="Authentication failed",
         )
 
 
