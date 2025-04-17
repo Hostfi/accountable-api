@@ -3,13 +3,14 @@ from uuid import UUID
 
 from app.managers.base_manager import BaseManager
 from app.schemas.organization import OrganizationCreate, OrganizationUpdate
+from app.models.organization import Organization
 
 
-class OrganizationManager(BaseManager):
+class OrganizationManager(BaseManager[Organization]):
     """Manager for organization operations."""
 
-    def __init__(self):
-        super().__init__("organizations")
+    def __init__(self) -> None:
+        super().__init__(table_name="organizations")
 
     async def create_organization(
         self, organization_create: OrganizationCreate, user_id: UUID

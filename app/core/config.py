@@ -1,5 +1,4 @@
-import os
-from typing import List, Union
+from typing import List, Union, Any
 
 from dotenv import load_dotenv
 from pydantic import field_validator
@@ -11,11 +10,10 @@ load_dotenv()
 class Settings(BaseSettings):
     # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
     BACKEND_CORS_ORIGINS: List[str] = [
-        "http://localhost:8000",
-        "https://your-app.com",  # TODO: change this to the actual app URL
+        "http://localhost:3000",
+        "http://local.tryaccountable.ai:3000",
+        "*.tryaccountable.ai",
     ]
-    # allow any localhost port
-    BACKEND_CORS_ORIGINS_REGEX: str = r"^(http://localhost:\d+|https://your-app\.com)$"
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
@@ -34,7 +32,7 @@ class Settings(BaseSettings):
 
     @field_validator("REDISHOST", "REDISPORT")
     @classmethod
-    def check_redis(cls, v, field):
+    def check_redis(cls, v: Any, field: Any) -> Any:
         if not v:
             raise ValueError(
                 f"{field.name} must be defined. For local development, you can use the default value in your .env '{field.name}={field.default}'"
@@ -46,6 +44,7 @@ class Settings(BaseSettings):
     SUPABASE_DB_PASSWORD: str
     SUPABASE_PROJECT_ID: str
     SUPABASE_ACCESS_TOKEN: str
+    DATABASE_URL: str
 
     # Clerk settings
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: str
@@ -60,10 +59,11 @@ class Settings(BaseSettings):
 
     @field_validator("LOG_LEVEL")
     @classmethod
-    def check_log_level(cls, v, field):
+    def check_log_level(cls, v: str, field: Any) -> str:
         if v not in ["debug", "info", "warning", "error", "critical"]:
             raise ValueError(
-                f"{field.name} must be a standard log level. For local development, you can use the default value in your .env '{field.name}={field.default}'"
+                f"{field.name} must be a standard log level. "
+                f"For local development, you can use the default value in your .env '{field.name}={field.default}'"
             )
         return v
 
@@ -72,4 +72,4 @@ class Settings(BaseSettings):
         env_file = ".env"
 
 
-settings = Settings()
+settings = Settings()  # type: ignore[call-arg] # Ignore MyPy error for missing env vars

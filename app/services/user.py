@@ -8,7 +8,7 @@ from app.schemas.user import UserResponse
 class UserService:
     """Service for user-related operations."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.user_manager = UserManager()
 
     async def get_user(self, clerk_id: str) -> Optional[UserResponse]:

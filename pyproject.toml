@@ -28,13 +28,25 @@ supabase = "^2.13.0"
 email-validator = "^2.1.0"
 clerk-backend-api = "^2.0.0"
 pydantic-settings = "^2.8.1"
-
-[tool.poetry.dev-dependencies]
-ipython = "^8.22.2"
-nest-asyncio = "^1.6.0"
+alembic = "^1.15.2"
+sqlalchemy = "^2.0.40"
+asyncpg = "^0.30.0"
+greenlet = "^3.1.1"
 
 [tool.poetry.scripts]
 dev = "main:dev"
+
+[tool.poetry.group.dev.dependencies]
+ipython = "^8.22.2"
+nest-asyncio = "^1.6.0"
+mypy = "^1.15.0"
+flake8 = "^7.2.0"
+
+[tool.mypy]
+packages = ["app"]
+namespace_packages = false
+ignore_missing_imports = true
+disallow_untyped_defs = true
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

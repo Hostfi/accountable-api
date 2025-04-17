@@ -1,22 +1,43 @@
 import logging
 import time
+import contextlib
 
 from dotenv import load_dotenv
 import uvicorn
 from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi_limiter.depends import RateLimiter
 
 from app.api.endpoints import health, organizations, users
 from app.core.config import settings
 from app.utils.redis import init_redis
+from app.db.session import sessionmanager
 
-app = FastAPI(dependencies=[Depends(RateLimiter(times=20, seconds=10))])
+
+@contextlib.asynccontextmanager
+async def lifespan(app: FastAPI):
+    await init_redis()
+    yield
+    if sessionmanager._engine is not None:
+        await sessionmanager.close()
+
+
+app = FastAPI(
+    lifespan=lifespan, dependencies=[Depends(RateLimiter(times=20, seconds=10))]
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.BACKEND_CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 logger = logging.getLogger(__name__)
-# .env variables can be validated and accessed from the config, here to set a log level
 logging.basicConfig(level=settings.LOG_LEVEL.upper())
 
 
-# Register routers
 app.include_router(health.router)
 app.include_router(users.router)
 app.include_router(organizations.router)
@@ -30,11 +51,6 @@ async def time_request(request, call_next):
     response.headers["Server-Timing"] = str(process_time)
     logger.info(f"{request.method} {round(process_time, 5)}s {request.url}")
     return response
-
-
-@app.on_event("startup")
-async def startup():
-    await init_redis()
 
 
 def dev():

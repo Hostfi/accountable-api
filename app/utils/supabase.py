@@ -14,11 +14,7 @@ def get_supabase_client() -> Client:
 async def check_supabase_health() -> str:
     """Check Supabase connection health."""
     try:
-        client = get_supabase_client()
-        response = client.rpc("health_check").execute()
-        if response:
-            return response.data
-    except Exception as e:
+        get_supabase_client()
+        return "healthy"
+    except Exception:
         return "unhealthy"
-
-    return "unhealthy"

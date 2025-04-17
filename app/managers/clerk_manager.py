@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from typing import Any, Dict, Optional
+from types import TracebackType
 from clerk_backend_api import AuthenticateRequestOptions, Clerk, RequestState
 from fastapi import Request
 
@@ -8,7 +11,7 @@ from app.core.config import settings
 class ClerkManager:
     """Manager for Clerk operations using the official SDK."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.client = Clerk(bearer_auth=settings.CLERK_SECRET_KEY)
 
     async def get_user(self, clerk_id: str) -> Optional[Dict[str, Any]]:
@@ -19,8 +22,13 @@ class ClerkManager:
                 return None
 
             # Extract necessary user data
-            email_obj = next(
-                (email for email in response.email_addresses if email.id), None
+            email_obj = (
+                next(
+                    (email for email in response.email_addresses if email.id),
+                    None,
+                )
+                if response.email_addresses
+                else None
             )
 
             return {
@@ -35,15 +43,20 @@ class ClerkManager:
             print(f"Error getting user from Clerk: {str(e)}")
             return None
 
-    def __enter__(self):
+    def __enter__(self) -> "ClerkManager":
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.client.__exit__(exc_type, exc_val, exc_tb)
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
+        pass
 
     def authenticate_request(self, request: Request) -> RequestState:
         return self.client.authenticate_request(
-            request,
+            request,  # type: ignore[arg-type]
             AuthenticateRequestOptions(
                 jwt_key=settings.CLERK_JWKS_KEY,
             ),
